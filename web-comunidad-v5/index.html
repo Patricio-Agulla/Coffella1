@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFE285" />
+  <title>Club Coffella · El café nos junta</title>
+  <meta name="description" content="Club Coffella: la comunidad de quienes toman, preparan y sirven café. Cafeterías para descubrir, juntadas cada semana y un carnet que suma con cada visita." />
+  <script>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var root = document.documentElement;
+      if (p.has('static')) root.classList.add('is-static');
+      if (p.has('frame')) root.classList.add('is-frame');
+      // Con movimiento (y sin ?static ni ?open) se muestra la precarga; la saca main.js.
+      if (!p.has('static') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.classList.add('js-motion');
+        if (!p.has('open') && !p.has('noload')) root.classList.add('is-loading');
+      }
+      if (location.hash.indexOf('figmacapture=') > -1) { var s = document.createElement('script'); s.src = 'https://mcp.figma.com/mcp/html-to-design/capture.js'; s.async = true; document.head.appendChild(s); }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.cosmos.so" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500..800&family=Sora:wght@500..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+  <!-- ===================== Precarga: las fotos se juntan ===================== -->
+  <div class="loader" data-loader aria-hidden="true">
+    <div class="loader__deck" data-deck>
+      <span class="loader__card"><img src="assets/img/deck-1.webp" alt="" width="480" height="600" /></span>
+      <span class="loader__card"><img src="assets/img/deck-2.webp" alt="" width="480" height="600" /></span>
+      <span class="loader__card"><img src="assets/img/deck-3.webp" alt="" width="480" height="600" /></span>
+      <span class="loader__card"><img src="assets/img/deck-4.webp" alt="" width="480" height="600" /></span>
+    </div>
+    <p class="loader__count"><span class="loader__cup" data-loader-cup aria-hidden="true"></span><span data-loader-pct>0</span><span class="loader__pc">%</span></p>
+  </div>
+
+  <a class="skip" href="#main">Saltar al contenido</a>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="logo" viewBox="0 0 108 22" fill="currentColor"><path d="M0.003 13.868C0.003 8.922 3.154 5.826 7.974 5.826c3.83 0 7.291 1.852 7.692 5.948.032.364-.123.637-.494.637h-3.275c-.278 0-.401-.121-.526-.394-.526-1.912-1.607-2.762-3.368-2.762-2.225 0-3.739 1.729-3.739 4.612s1.483 4.673 3.707 4.673c1.699 0 2.966-.91 3.368-2.7.093-.273.248-.394.556-.394h3.275c.278 0 .494.182.463.577-.463 4.097-3.862 5.918-7.631 5.918C3.152 21.941 0 18.816 0 13.869Z"/><path d="M17.367 13.868c0-5.129 3.398-8.012 8.095-8.012 4.698 0 8.187 2.852 8.187 8.012s-3.429 8.072-8.187 8.072-8.095-2.852-8.095-8.072Zm12.019 0c0-2.852-1.607-4.613-3.894-4.613-2.286 0-3.862 1.791-3.862 4.613 0 2.821 1.606 4.672 3.862 4.672s3.894-1.79 3.894-4.672Z"/><path d="M37.14 21.121l.032-11.137c0-.243-.062-.304-.31-.304h-1.452c-.278 0-.494-.212-.494-.577V6.766c0-.333.185-.516.556-.516h1.421c.216 0 .278-.061.278-.273v-.94C37.17 1.548 39.518 0 42.979 0c.618 0 1.237.06 1.638.212.309.121.464.334.464.759v1.548c0 .485-.185.668-.618.637-2.286-.181-3.183.213-3.183 2.125v.637c0 .152.124.333.371.333h2.842c.31 0 .494.213.494.486v2.458c0 .273-.216.485-.494.485H41.62c-.248 0-.31.061-.31.273l.124 11.168c0 .273-.217.485-.495.485h-3.306c-.278 0-.494-.212-.494-.485Z"/><path d="M46.671 21.121l.032-11.137c0-.243-.062-.304-.31-.304h-1.452c-.278 0-.494-.212-.494-.577V6.766c0-.333.185-.516.556-.516h1.421c.216 0 .278-.061.278-.273v-.94C46.701 1.548 49.049 0 52.51 0c.618 0 1.236.06 1.638.212.309.121.463.334.463.759v1.548c0 .485-.184.668-.617.637-2.286-.181-3.182.213-3.182 2.125v.637c0 .152.123.333.371.333h2.842c.31 0 .494.213.494.486v2.458c0 .273-.216.485-.494.485h-2.874c-.246 0-.309.061-.309.273l.123 11.168c0 .273-.216.485-.494.485h-3.306c-.278 0-.494-.212-.494-.485Z"/><path d="M55.996 13.928c0-5.068 3.181-8.012 7.754-8.012 4.974 0 7.476 2.883 7.476 8.952 0 .456-.216.606-.494.606H60.722c-.278 0-.402.061-.402.365 0 1.426 1.638 2.7 3.615 2.7 1.482 0 2.348-.456 2.749-1.244.186-.213.278-.394.587-.394h3.12c.278 0 .495.121.433.394-.464 2.913-3.306 4.704-6.982 4.704-4.45 0-7.848-2.7-7.848-8.072Zm11.06-1.729c0-1.821-1.391-3.035-3.306-3.035-1.915 0-3.461 1.244-3.461 3.064 0 .213.123.304.371.304h5.994c.248 0 .401-.091.401-.333Z"/><path d="M73.761 21.121l.061-5.281-.031-10.409-.093-4.583c-.032-.273.185-.485.464-.485h3.306c.278 0 .495.181.495.485l-.062 7.191v8.587l.062 4.491c0 .304-.217.486-.495.486h-3.245c-.278 0-.494-.213-.464-.486Z"/><path d="M81.207 21.121l.062-5.281-.032-10.409-.093-4.583c-.031-.273.185-.485.464-.485h3.306c.278 0 .495.181.495.485l-.062 7.191v8.587l.062 4.491c0 .304-.217.486-.495.486h-3.245c-.278 0-.494-.213-.464-.486Z"/><path d="M87.633 16.447c0-3.702 2.658-5.432 5.901-5.432 2.997 0 4.047 1.548 4.325 1.548.123 0 .155-.091.155-.212v-.334c0-1.699-.927-2.974-4.357-2.974h-2.04c-.278 0-.494-.212-.494-.485V6.645c0-.273.185-.456.494-.485.681-.092 1.483-.152 2.534-.152 5.901 0 7.971 1.912 7.971 6.737l-.031 5.22.216 3.125c.032.273-.155.516-.464.516h-3.152c-.278 0-.494-.181-.494-.485l-.031-.819c0-.244-.185-.334-.31-.092-.433.789-1.669 1.79-4.14 1.79-3.677 0-6.087-1.973-6.087-5.554Zm10.35.031c0-1.791-1.328-2.488-3.058-2.488-1.731 0-3.059.789-3.059 2.458 0 1.669 1.328 2.579 3.059 2.579 1.73 0 3.058-.789 3.058-2.549Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="i-arrow-ur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a.6.6 0 0 0 .9.5l10.4-6.5a.6.6 0 0 0 0-1L8.9 5a.6.6 0 0 0-.9.5Z"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="3"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></symbol>
+  </svg>
+
+  <!-- ===================== Header ===================== -->
+  <header class="hdr is-top" id="hdr">
+    <nav class="hdr__nav" aria-label="Secciones">
+      <a href="#nosotros">Nosotros</a>
+      <a href="#comunidad">Comunidad</a>
+      <a href="#juntadas">Juntadas</a>
+      <a href="#mapa">Mapa</a>
+      <a href="#historias">Historias</a>
+      <a href="#tienda">Tienda</a>
+    </nav>
+    <button class="hdr__menu" type="button" data-open-menu aria-expanded="false" aria-controls="menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>Menú</button>
+    <a class="hdr__logo" href="#top" aria-label="Coffella, ir al inicio"><svg aria-hidden="true"><use href="#logo"/></svg></a>
+    <div class="hdr__act">
+      <button class="hdr__link" type="button" data-join="login">Ingresar</button>
+      <a class="hdr__me" href="#carnet" data-me hidden><span data-me-txt>Mi carnet</span><span class="hdr__me-n" data-me-n>0</span></a>
+      <button class="btn btn--join btn--sm hdr__join" type="button" data-join><span class="hdr__join-l">Sumate al Club</span><span class="hdr__join-s">Sumate</span></button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ===================== Hero ===================== -->
+    <section class="hero" aria-labelledby="hero-title">
+      <!-- Panel amarillo sin foto: el producto es la taza (isotipo), que asoma desde el borde inferior. -->
+      <div class="hero__panel" data-hero-panel>
+      <div class="hero__copy">
+        <h1 class="hero__title" id="hero-title" data-split>El café nos junta.</h1>
+        <p class="hero__sub" data-hero-in>Un club para quienes lo toman, lo preparan y lo sirven.</p>
+        <div class="hero__cta" data-hero-in>
+          <button class="btn btn--join" type="button" data-join>Sumate al Club</button>
+          <a class="btn btn--ghost" href="#nosotros">Explorar<svg class="i" aria-hidden="true"><use href="#i-arrow-down"/></svg></a>
+        </div>
+        <p class="proof" data-hero-in><span class="avatars" data-avatars></span><span><strong data-count="312">312</strong> personas se sumaron esta semana</span></p>
+      </div>
+      <!-- La taza asoma desde el borde del panel: se despierta, lee el titular y mira lo que señalás. -->
+      <div class="hero__cup" data-hero-cup>
+        <svg class="cup" viewBox="210 355 660 360" aria-hidden="true" focusable="false" data-cup="hero">
+          <g class="cup__body">
+            <circle class="cup__handle" cx="300.48" cy="445.59" r="75.65" />
+            <path class="cup__bowl" d="M401.26,372.04H855.18V483.1C855.18,608.45 753.57,710.06 628.22,710.06S401.26,608.45 401.26,483.1Z" />
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="562" cy="492" r="64" /><circle class="cup__pupil" cx="562" cy="492" r="33" data-pupil /></g>
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="690" cy="492" r="64" /><circle class="cup__pupil" cx="690" cy="492" r="33" data-pupil /></g>
+            <g class="cup__lids" data-lids><path d="M522,494 Q562,530 602,494" /><path d="M650,494 Q690,530 730,494" /></g>
+          </g>
+        </svg>
+      </div>
+      </div>
+    </section>
+
+    <!-- ===================== Quiénes somos ===================== -->
+    <section class="about" id="nosotros" aria-labelledby="about-title">
+      <h2 class="sr-only" id="about-title">Quiénes somos</h2>
+      <p class="about__statement">Coffella es un club de café para que tomar uno sea también encontrarse. Juntamos a quienes lo toman <span class="pic" data-pic><img src="https://cdn.cosmos.so/96ffbebf-85d8-45d3-88be-b5890ca05597?format=webp&w=360" alt="" width="360" height="450" loading="lazy" /></span>, a quienes lo preparan <span class="pic" data-pic><img src="https://cdn.cosmos.so/images/01a15a9c-f3b0-7f37-9d29-4d26e156d6ba?format=webp&w=360" alt="" width="360" height="445" loading="lazy" /></span> y a los lugares que lo sirven <span class="pic" data-pic><img src="https://cdn.cosmos.so/16735c87-e1be-4617-bcd7-a98a644dc3fe?format=webp&w=360" alt="" width="360" height="448" loading="lazy" /></span> en una misma mesa.</p>
+    </section>
+
+    <!-- ===================== Tres formas de ser parte ===================== -->
+    <section class="sec roles" id="comunidad" aria-labelledby="roles-title">
+      <header class="head">
+        <h2 class="h2" id="roles-title">Tres formas de ser parte del Club.</h2>
+        <p class="lead">Todos entran al mismo Club. Elegí por dónde empezar; después podés cambiarlo.</p>
+      </header>
+      <ul class="rcards" data-roles aria-label="Formas de ser parte"><!-- tarjetas por JS --></ul>
+    </section>
+
+    <!-- ===================== Lo que compartimos (bento) ===================== -->
+    <section class="panel-sec share" aria-labelledby="share-title">
+      <header class="head">
+        <h2 class="h2" id="share-title">Lo que compartimos en el Club.</h2>
+        <p class="lead">Todo lo que pasa en el Club gira alrededor de cinco cosas que hacemos juntos. Cada una lleva a la otra: las catas suman sellos, el carnet te lleva a una barra nueva y la barra nueva termina en la juntada de la semana.</p>
+      </header>
+      <ul class="bento" data-bento><!-- por JS --></ul>
+    </section>
+
+    <!-- ===================== Carnet del Club ===================== -->
+    <section class="carnet" id="carnet" aria-labelledby="carnet-title">
+      <div class="carnet__frame">
+        <picture>
+          <!-- Recortes locales de la foto de Cosmos: apaisado para desktop y 4:5 para mobile. -->
+          <source media="(max-width: 1024px)" srcset="assets/img/carnet-m-900.webp" />
+          <img class="carnet__img" src="assets/img/carnet-1400.webp" srcset="assets/img/carnet-1400.webp 1400w, assets/img/carnet-2200.webp 2200w" sizes="100vw" alt="Baristas detrás de una barra de madera en una cafetería de paredes verdes con luz de tarde" width="2200" height="1375" loading="lazy" decoding="async" />
+        </picture>
+        <div class="carnet__shade" aria-hidden="true"></div>
+        <div class="carnet__copy">
+          <h2 class="h2" id="carnet-title">Carnet del Club.</h2>
+          <p class="carnet__lead">Pedí tu sello al pagar en cualquier cafetería del Club. En la 4ª visita te regalamos una taza; en la 8ª, una cata para dos. Sellos digitales, rutas por barrio y tus cafeterías favoritas siempre a mano.</p>
+          <div class="carnet__cta">
+            <button class="btn btn--join" type="button" data-passport-cta>Activar mi carnet</button>
+            <button class="btn btn--ghost-light" type="button" data-stamp-demo>Probá cómo se sella</button>
+          </div>
+          <p class="carnet__hint" aria-live="polite" data-demo-msg>Cada visita llena una taza.</p>
+        </div>
+        <div class="carnet__card">
+          <article class="passport" data-passport aria-label="Vista previa del carnet"></article>
+          <img class="sticker" src="assets/img/sticker-club.webp" alt="" width="360" height="360" loading="lazy" />
+        </div>
+      </div>
+      <div class="howto">
+        <h3 class="howto__title">Cómo funciona</h3>
+        <ol class="howto__list">
+          <li><span class="lvl" style="--l:.25" aria-hidden="true"></span><h4>Sumate gratis</h4><p>Solo tu email, sin contraseñas: te mandamos un link para entrar. Tu primer sello va de regalo.</p></li>
+          <li><span class="lvl" style="--l:.5" aria-hidden="true"></span><h4>Elegí cómo participás</h4><p>Tomo café, preparo café o tengo una cafetería. Con eso armamos tu carnet, tu perfil o tu ficha en el mapa.</p></li>
+          <li><span class="lvl" style="--l:.75" aria-hidden="true"></span><h4>Visitá y sumá sellos</h4><p>Pedí tu sello en cualquier barra del Club y reservá tu lugar en catas, talleres y throwdowns.</p></li>
+          <li><span class="lvl" style="--l:1" aria-hidden="true"></span><h4>Canjeá y volvé</h4><p>Taza en la 4ª visita, cata para dos en la 8ª y 10 % off en la tienda mientras seas parte.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== Juntadas de la semana ===================== -->
+    <section class="sec events" id="juntadas" aria-labelledby="events-title">
+      <header class="head">
+        <h2 class="h2" id="events-title">Juntadas de la semana.</h2>
+        <p class="lead">Catas, talleres y throwdowns en cafeterías del Club. Para miembros, gratis o con descuento.</p>
+      </header>
+      <ul class="evlist" data-events aria-label="Juntadas de la semana, desplazable"><!-- por JS --></ul>
+    </section>
+
+    <!-- ===================== Mapa ===================== -->
+    <section class="sec mapsec" id="mapa" aria-labelledby="map-title">
+      <header class="head">
+        <h2 class="h2" id="map-title">Cafeterías del Club.</h2>
+        <p class="lead">Cafeterías de especialidad de Córdoba que son parte del Club. Elegí un barrio, un plan o lo que tengas cerca.</p>
+      </header>
+      <div class="mapctl">
+        <label class="search">
+          <span class="sr-only">Buscar cafetería o barrio</span>
+          <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="map-q" type="search" placeholder="Buscá por nombre o barrio" autocomplete="off" />
+        </label>
+        <div class="chips" role="group" aria-label="Filtrar cafeterías" data-map-chips>
+          <button type="button" class="chip" data-f="" aria-pressed="true">Todas</button>
+          <button type="button" class="chip" data-f="open" aria-pressed="false">Abiertas ahora</button>
+          <button type="button" class="chip" data-f="tostado" aria-pressed="false">Tuestan</button>
+          <button type="button" class="chip" data-f="trabajar" aria-pressed="false">Para trabajar</button>
+          <button type="button" class="chip" data-f="pet" aria-pressed="false">Pet friendly</button>
+        </div>
+      </div>
+      <div class="mapbox">
+        <div class="map" id="map" role="region" aria-label="Mapa de cafeterías de Córdoba"></div>
+        <p class="mapcount" aria-live="polite" data-map-count></p>
+        <ol class="mapcards" data-map-list aria-label="Lista de cafeterías"></ol>
+      </div>
+      <p class="mapnote">Nombres y ubicaciones de ejemplo para el prototipo. Mapa: © OpenStreetMap.</p>
+    </section>
+
+    <!-- ===================== Historias: notas y videos ===================== -->
+    <section class="sec stories" id="historias" aria-labelledby="stories-title">
+      <header class="head">
+        <h2 class="h2" id="stories-title">Historias de la comunidad.</h2>
+        <div class="seg" role="tablist" aria-label="Tipo de historia" data-tabs>
+          <button class="seg__btn" type="button" role="tab" id="tab-notas" aria-selected="true" aria-controls="panel-notas">Notas</button>
+          <button class="seg__btn" type="button" role="tab" id="tab-videos" aria-selected="false" aria-controls="panel-videos" tabindex="-1">Videos</button>
+        </div>
+      </header>
+      <div class="tabpanel" id="panel-notas" role="tabpanel" aria-labelledby="tab-notas">
+        <ul class="posts" data-blog></ul>
+        <p class="stories__more"><a class="btn btn--ghost" href="#" data-toast="Las notas completas llegan en la próxima etapa.">Ver todas las notas</a></p>
+      </div>
+      <div class="tabpanel" id="panel-videos" role="tabpanel" aria-labelledby="tab-videos" hidden>
+        <div class="videos" data-videos></div>
+        <p class="stories__more"><a class="btn btn--ghost" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube: @coffella<svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a></p>
+      </div>
+    </section>
+
+    <!-- ===================== Tienda ===================== -->
+    <section class="panel-sec shop" id="tienda" aria-labelledby="shop-title">
+      <header class="head">
+        <p class="badge">Miembros 10 % off</p>
+        <h2 class="h2" id="shop-title">Llevate el Club a casa.</h2>
+      </header>
+      <ul class="products" data-products></ul>
+      <p class="shop__more"><a class="btn btn--ink" href="../web-eshop/index.html">Ir a la tienda<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
+    </section>
+
+    <!-- ===================== Cierre ===================== -->
+    <section class="closing" id="sumate" aria-labelledby="end-title">
+      <div class="closing__frame" data-closing>
+        <picture>
+          <source type="image/avif" srcset="assets/img/closing-1080.avif 1080w, assets/img/closing-1620.avif 1620w, assets/img/closing-2160.avif 2160w" sizes="100vw" />
+          <source type="image/webp" srcset="assets/img/closing-1080.webp 1080w, assets/img/closing-1620.webp 1620w, assets/img/closing-2160.webp 2160w" sizes="100vw" />
+          <img class="closing__img" src="assets/img/closing-1620.webp" alt="Dos baristas de espaldas conversan en la barra de una cafetería luminosa" width="1620" height="2025" loading="lazy" />
+        </picture>
+        <div class="closing__shade" aria-hidden="true"></div>
+        <div class="closing__copy">
+          <h2 class="h2" id="end-title">Coffella es un club abierto, hecho para compartir.</h2>
+          <p>Lo que sabemos del café se aprende mirando, probando y conversando. Por eso juntamos a quienes lo toman, lo preparan y lo sirven, para que ese conocimiento circule.</p>
+          <p>Con juntadas, notas y un carnet que premia salir a conocer, queremos que cada taza sea una excusa para volver a encontrarnos.</p>
+          <button class="btn btn--join" type="button" data-join>Sumate al Club</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Instagram ===================== -->
+    <section class="sec ig" aria-labelledby="ig-title">
+      <header class="head">
+        <h2 class="h2" id="ig-title">El Club, en Instagram.</h2>
+        <p class="lead">Lo que pasa en las barras del Club, contado por quienes van: aperturas, juntadas, throwdowns y el café de todos los días. Publicamos tres veces por semana y compartimos lo que suben los miembros.</p>
+      </header>
+      <ul class="ig__row">
+        <li><a class="ig__post" href="https://instagram.com" target="_blank" rel="noopener"><img src="https://cdn.cosmos.so/5283cd4e-d50d-49d3-84ac-396cd83057af?format=webp&w=600" alt="Gente compartiendo mesas bajo una gran lámpara de papel" width="675" height="1200" loading="lazy" /><span class="ig__cap"><b>@sobremesa.cba</b>La mesa larga de los jueves</span><span class="sr-only"> (abre Instagram)</span></a></li>
+        <li><a class="ig__post" href="https://instagram.com" target="_blank" rel="noopener"><img src="https://cdn.cosmos.so/01a0e6b7-0d2e-7486-a774-c745260c8f5d?format=webp&w=600" alt="Una barra larga de cafetería vista desde arriba" width="828" height="989" loading="lazy" /><span class="ig__cap"><b>@barranorte</b>La barra a las 8, antes del primer turno</span><span class="sr-only"> (abre Instagram)</span></a></li>
+        <li><a class="ig__post" href="https://instagram.com" target="_blank" rel="noopener"><img src="https://cdn.cosmos.so/db67d42c-f044-4ccb-8297-dd696c7d3e75?format=webp&w=600" alt="Dos baristas sonríen detrás de la máquina de espresso" width="1080" height="1440" loading="lazy" /><span class="ig__cap"><b>@tertulia.cafe</b>Throwdown del sábado: ganó la roseta</span><span class="sr-only"> (abre Instagram)</span></a></li>
+        <li><a class="ig__post" href="https://instagram.com" target="_blank" rel="noopener"><img src="https://cdn.cosmos.so/a2c8b3e0-5858-44fa-9c12-e456aa75e053?format=webp&w=600" alt="Mesas y barra de una cafetería vistas desde arriba" width="816" height="1456" loading="lazy" /><span class="ig__cap"><b>@origen.cafe</b>Cuarta parada de la juntada de barrio</span><span class="sr-only"> (abre Instagram)</span></a></li>
+        <li><a class="ig__post" href="https://instagram.com" target="_blank" rel="noopener"><img src="https://cdn.cosmos.so/bcccbc67-05eb-4071-a9a6-c2315d3a822f?format=webp&w=600" alt="Dos personas esperan su café en una barra con luz cálida" width="1080" height="1440" loading="lazy" /><span class="ig__cap"><b>@pausa.cafe</b>Filtrado de la tarde, con sello</span><span class="sr-only"> (abre Instagram)</span></a></li>
+      </ul>
+      <div class="ig__join">
+        <p class="ig__how"><strong>¿Querés aparecer?</strong> Subí tu café en una barra del Club con <span class="ig__tag">#ClubCoffella</span> o etiquetá a @clubcoffella.</p>
+        <div class="ig__cta">
+          <a class="btn btn--ink" href="https://instagram.com" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-instagram"/></svg>Seguir a @clubcoffella</a>
+          <button class="btn btn--ghost" type="button" data-copy="#ClubCoffella"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label>Copiar #ClubCoffella</span></button>
+        </div>
+        <p class="ig__stats"><span><strong>12,4 mil</strong> personas siguen al Club</span><span><strong>3</strong> publicaciones por semana</span><span><strong>+600</strong> fotos de miembros</span></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== Footer ===================== -->
+  <footer class="ftr">
+    <div class="ftr__cup">
+        <svg class="cup" viewBox="210 355 660 230" aria-hidden="true" focusable="false" data-cup="footer">
+          <g class="cup__body">
+            <circle class="cup__handle" cx="300.48" cy="445.59" r="75.65" />
+            <path class="cup__bowl" d="M401.26,372.04H855.18V483.1C855.18,608.45 753.57,710.06 628.22,710.06S401.26,608.45 401.26,483.1Z" />
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="562" cy="492" r="64" /><circle class="cup__pupil" cx="562" cy="492" r="33" data-pupil /></g>
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="690" cy="492" r="64" /><circle class="cup__pupil" cx="690" cy="492" r="33" data-pupil /></g>
+            <g class="cup__lids" data-lids><path d="M522,494 Q562,530 602,494" /><path d="M650,494 Q690,530 730,494" /></g>
+          </g>
+        </svg>
+    </div>
+    <div class="ftr__panel">
+      <p class="ftr__claim">Café de especialidad, hecho comunidad.</p>
+      <form class="ftr__form" data-join-form novalidate>
+        <p class="ftr__pitch">Sumate al Club y recibí La Semanal, tu primer sello y 10 % off en tu primera compra.</p>
+        <div class="ftr__fields">
+          <label class="sr-only" for="ftr-name">Nombre</label>
+          <input id="ftr-name" name="name" type="text" autocomplete="given-name" placeholder="Nombre" />
+          <label class="sr-only" for="ftr-email">Email</label>
+          <input id="ftr-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Email" aria-describedby="ftr-msg" />
+          <button class="btn btn--join" type="submit">Sumarme</button>
+        </div>
+        <p class="join__msg" id="ftr-msg" aria-live="polite"></p>
+        <p class="ftr__legal-note">Al sumarte aceptás recibir comunicaciones de Coffella y la <a href="#" data-toast="La política de privacidad se publica en la próxima etapa.">política de privacidad</a>. Podés darte de baja cuando quieras.</p>
+      </form>
+      <div class="ftr__cols">
+        <nav class="ftr__col" aria-label="El Club"><h3>El Club</h3><a href="#comunidad">Cómo ser parte</a><a href="#carnet">Carnet</a><a href="#juntadas">Juntadas</a><a href="#mapa">Mapa</a></nav>
+        <nav class="ftr__col" aria-label="Cafeterías y baristas"><h3>Cafeterías y baristas</h3><a href="#" data-join="c">Sumar mi cafetería</a><a href="#" data-join="b">Perfil de barista</a><a href="mailto:hola@coffella.com.ar">hola@coffella.com.ar</a></nav>
+        <nav class="ftr__col" aria-label="Conectar"><h3>Conectar</h3><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a><a href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a><a href="../web-eshop/index.html">Tienda</a></nav>
+      </div>
+      <a class="ftr__logo" href="#top" aria-label="Coffella, volver arriba"><svg aria-hidden="true"><use href="#logo"/></svg></a>
+      <div class="ftr__legal">
+        <p>© Coffella, 2026</p>
+        <a href="#" data-toast="La política de privacidad se publica en la próxima etapa.">Privacidad</a>
+        <a href="#" data-toast="Los términos se publican en la próxima etapa.">Términos</a>
+        <p>Fotos de referencia vía Cosmos y Unsplash</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== Invitación (pop-up de registro) ===================== -->
+  <aside class="invite" data-invite hidden aria-labelledby="invite-title">
+    <svg class="cup cup--peek" viewBox="210 355 660 205" aria-hidden="true" focusable="false" data-cup="invite">
+          <g class="cup__body">
+            <circle class="cup__handle" cx="300.48" cy="445.59" r="75.65" />
+            <path class="cup__bowl" d="M401.26,372.04H855.18V483.1C855.18,608.45 753.57,710.06 628.22,710.06S401.26,608.45 401.26,483.1Z" />
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="562" cy="492" r="64" /><circle class="cup__pupil" cx="562" cy="492" r="33" data-pupil /></g>
+            <g class="cup__eye" data-eye><circle class="cup__white" cx="690" cy="492" r="64" /><circle class="cup__pupil" cx="690" cy="492" r="33" data-pupil /></g>
+            <g class="cup__lids" data-lids><path d="M522,494 Q562,530 602,494" /><path d="M650,494 Q690,530 730,494" /></g>
+          </g>
+        </svg>
+    <button class="iconbtn invite__close" type="button" data-invite-close aria-label="Cerrar invitación"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button>
+    <span class="avatars" data-avatars></span>
+    <p class="invite__title" id="invite-title">Sumate al Club: tu primer sello va de regalo, reservás juntadas y tenés 10 % off en la tienda.</p>
+    <form class="invite__form" data-invite-form novalidate>
+      <label class="sr-only" for="inv-name">Nombre</label>
+      <input id="inv-name" name="name" type="text" autocomplete="given-name" placeholder="Nombre" />
+      <label class="sr-only" for="inv-email">Email</label>
+      <input id="inv-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Email" aria-describedby="inv-msg" />
+      <button class="btn btn--ink" type="submit">Sumarme gratis</button>
+      <p class="join__msg" id="inv-msg" aria-live="polite"></p>
+    </form>
+    <p class="invite__legal"><strong data-count="312">312</strong> personas se sumaron esta semana. Sin contraseñas: te mandamos un link para entrar.</p>
+  </aside>
+
+  <!-- ===================== Menú ===================== -->
+  <dialog class="dlg menu" id="menu" aria-label="Menú">
+    <div class="dlg__scrim" data-close></div>
+    <div class="menu__sheet">
+      <div class="menu__top">
+        <svg class="menu__logo" aria-hidden="true"><use href="#logo"/></svg>
+        <button class="iconbtn" type="button" data-close aria-label="Cerrar menú" autofocus><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <nav class="menu__links" aria-label="Secciones">
+        <a href="#nosotros" data-close>Nosotros</a>
+        <a href="#comunidad" data-close>Comunidad</a>
+        <a href="#juntadas" data-close>Juntadas</a>
+        <a href="#mapa" data-close>Mapa</a>
+        <a href="#historias" data-close>Historias</a>
+        <a href="#tienda" data-close>Tienda</a>
+      </nav>
+      <div class="menu__foot">
+        <button class="btn btn--join" type="button" data-join>Sumate al Club</button>
+        <button class="btn btn--ghost" type="button" data-join="login">Ingresar</button>
+        <p class="menu__note">Miembros: 10 % off en la tienda</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ===================== Registro (3 pasos) ===================== -->
+  <dialog class="dlg signup" id="signup" aria-labelledby="su-title">
+    <div class="dlg__scrim" data-close></div>
+    <div class="signup__panel">
+      <div class="signup__top">
+        <ol class="steps" aria-label="Pasos del registro" data-steps><li class="is-on">Rol</li><li>Datos</li><li>Listo</li></ol>
+        <button class="iconbtn" type="button" data-close aria-label="Cerrar registro"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="signup__body">
+        <p class="signup__reason" data-su-reason hidden></p>
+
+        <form class="su-step" data-step="1" novalidate>
+          <h2 class="su-title" id="su-title" tabindex="-1">¿Cómo querés sumarte al Club?</h2>
+          <p class="su-sub">Todos entran al mismo Club. Elegí por dónde empezar; después podés cambiarlo.</p>
+          <fieldset class="rolecards">
+            <legend class="sr-only">Tu rol en la comunidad</legend>
+            <label class="rolecard"><input type="radio" name="su-role" value="a" checked /><span class="rolecard__in"><img src="https://cdn.cosmos.so/96ffbebf-85d8-45d3-88be-b5890ca05597?format=webp&w=200" alt="" width="64" height="64" loading="lazy" /><strong>Tomo café</strong><span>Mapa, carnet, catas y descuentos.</span></span></label>
+            <label class="rolecard"><input type="radio" name="su-role" value="b" /><span class="rolecard__in"><img src="https://cdn.cosmos.so/images/01a15a9c-f3b0-7f37-9d29-4d26e156d6ba?format=webp&w=200" alt="" width="64" height="64" loading="lazy" /><strong>Preparo café</strong><span>Perfil de barista, throwdowns y búsquedas.</span></span></label>
+            <label class="rolecard"><input type="radio" name="su-role" value="c" /><span class="rolecard__in"><img src="https://cdn.cosmos.so/16735c87-e1be-4617-bcd7-a98a644dc3fe?format=webp&w=200" alt="" width="64" height="64" loading="lazy" /><strong>Tengo una cafetería</strong><span>Ficha en el mapa, juntadas propias y visitas.</span></span></label>
+          </fieldset>
+          <button class="btn btn--ink btn--block" type="submit">Continuar<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <p class="su-alt">¿Ya sos parte? <button class="tlink" type="button" data-su-login>Ingresá con tu email</button></p>
+        </form>
+
+        <form class="su-step" data-step="2" novalidate hidden>
+          <h2 class="su-title" tabindex="-1" data-step2-title>Contanos quién sos</h2>
+          <p class="su-sub" data-step2-sub>Con esto armamos tu carnet. Te mandamos un link para entrar, sin contraseñas.</p>
+          <div class="su-fields">
+            <div class="fld"><label for="su-name">Tu nombre</label><input id="su-name" name="name" type="text" autocomplete="given-name" required aria-describedby="su-name-msg" /><p class="fld__msg" id="su-name-msg"></p></div>
+            <div class="fld"><label for="su-email">Email</label><input id="su-email" name="email" type="email" inputmode="email" autocomplete="email" required aria-describedby="su-email-msg" /><p class="fld__msg" id="su-email-msg"></p></div>
+            <div class="fld" data-only="b" hidden><label for="su-work">¿Dónde trabajás? <span>(opcional)</span></label><input id="su-work" name="work" type="text" autocomplete="organization" /></div>
+            <div class="fld" data-only="c" hidden><label for="su-cafe">Nombre de tu cafetería</label><input id="su-cafe" name="cafe" type="text" autocomplete="organization" aria-describedby="su-cafe-msg" /><p class="fld__msg" id="su-cafe-msg"></p></div>
+            <div class="fld" data-only="c" hidden><label for="su-where">¿Dónde está? <span>(barrio y ciudad)</span></label><input id="su-where" name="where" type="text" autocomplete="address-level2" placeholder="Barrio, ciudad" /></div>
+            <label class="check"><input type="checkbox" name="news" checked /><span class="check__box" aria-hidden="true"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></span><span>Quiero recibir La Semanal: aperturas, notas y la agenda de juntadas.</span></label>
+          </div>
+          <div class="su-actions">
+            <button class="btn btn--ghost" type="button" data-back>Volver</button>
+            <button class="btn btn--ink" type="submit"><span class="spinner" aria-hidden="true"></span><span data-su-submit>Crear mi carnet</span></button>
+          </div>
+          <p class="su-legal">Al sumarte aceptás los términos y la política de privacidad.</p>
+        </form>
+
+        <div class="su-step su-done" data-step="3" hidden>
+          <h2 class="su-title" tabindex="-1">Ya sos parte del Club.</h2>
+          <p class="su-sub" data-done-sub>Te mandamos un link para entrar desde cualquier dispositivo.</p>
+          <article class="passport passport--mini" data-passport-mini></article>
+          <div class="su-actions su-actions--stack">
+            <a class="btn btn--ink btn--block" href="#mapa" data-close>Buscar una cafetería para mi próximo sello</a>
+            <a class="tlink" href="#juntadas" data-close>Ver las juntadas de la semana</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ===================== Video ===================== -->
+  <dialog class="dlg video" id="video" aria-labelledby="video-title">
+    <div class="dlg__scrim" data-close></div>
+    <div class="video__panel">
+      <div class="video__top">
+        <h2 class="video__title" id="video-title" data-video-title>Video</h2>
+        <button class="iconbtn iconbtn--light" type="button" data-close aria-label="Cerrar video" autofocus><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="video__frame"><video controls playsinline preload="none" data-video-el></video></div>
+      <p class="video__note">Vista previa del prototipo. En producción se embebe el video del canal de YouTube de Coffella.</p>
+    </div>
+  </dialog>
+
+  <div class="toast" role="status" aria-live="polite" data-toast-el><p data-toast-text></p></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="main.js"></script>
+</body>
+</html>
